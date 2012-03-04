@@ -40,7 +40,7 @@ public class SystemModuleConfiguration {
 
    @Bean
    public DataSource dataSource() {
-      if (Arrays.asList(env.getActiveProfiles()).contains("testing")) {
+      if (isTestProfileActive()) {
 	 // We use an embedded H2 database instance for testing
 	 return new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.H2).addScript("classpath:/db/schema.sql").build();
       } else {
@@ -84,7 +84,15 @@ public class SystemModuleConfiguration {
       HibernateJpaVendorAdapter adapter = new HibernateJpaVendorAdapter();
       adapter.setShowSql(env.getProperty("persistence.hibernate.showSql", Boolean.class));
       adapter.setGenerateDdl(env.getProperty("persistence.hibernate.generateDdl", Boolean.class));
-      adapter.setDatabasePlatform(env.getProperty("persistence.hibernate.databasePlatform"));
+      if(isTestProfileActive()){
+	 adapter.setDatabasePlatform("org.hibernate.dialect.H2Dialect");	 
+      }else{
+	 adapter.setDatabasePlatform(env.getProperty("persistence.hibernate.databasePlatform")); 
+      }      
       return adapter;
+   }
+   
+   private boolean isTestProfileActive() {
+      return Arrays.asList(env.getActiveProfiles()).contains("testing");
    }
 }
