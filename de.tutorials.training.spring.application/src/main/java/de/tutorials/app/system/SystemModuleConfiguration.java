@@ -26,66 +26,65 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Configuration
 @EnableTransactionManagement(proxyTargetClass = true)
 @PropertySource("classpath:/config/system.properties")
+/*
+ * At the time of this writing 04.02.2012 Spring-Data-JPA is not able to be
+ * fully configured via javaconfig therefore we have to include one small xml
+ * file: spring-data-config.xml
+ */
 @ImportResource("classpath:/spring/spring-data-config.xml")
-// At the time of this writing 04.02.2012 Spring-Data-JPA is not able to be
-// fully configured via javaconfig
-// therefore we have to include one small xml file...
 @ComponentScan(basePackages = { "de.tutorials.app" })
 public class SystemModuleConfiguration {
 
-    @Inject
-    protected Environment env;
+   @Inject
+   protected Environment env;
 
-    @Bean
-    public DataSource dataSource() {
-	if (Arrays.asList(env.getActiveProfiles()).contains("testing")) {
-	    // Wir testen mit einer embedded h2 db
-	    return new EmbeddedDatabaseBuilder()
-		    .setType(EmbeddedDatabaseType.H2)
-		    .addScript("classpath:/db/schema.sql").build();
-	} else {
-	    SimpleDriverDataSource ds = new SimpleDriverDataSource();
-	    ds.setDriverClass(env.getPropertyAsClass(
-		    "persistence.db.driverClass", Driver.class));
-	    ds.setUrl(env.getProperty("persistence.db.url"));
-	    ds.setUsername(env.getProperty("persistence.db.username"));
-	    ds.setPassword(env.getProperty("persistence.db.password"));
-	    return ds;
-	}
-    }
+   @Bean
+   public DataSource dataSource() {
+      if (Arrays.asList(env.getActiveProfiles()).contains("testing")) {
+	 // We use an embedded H2 database instance for testing
+	 return new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.H2).addScript("classpath:/db/schema.sql").build();
+      } else {
+	 SimpleDriverDataSource ds = new SimpleDriverDataSource();
+	 ds.setDriverClass(env.getPropertyAsClass("persistence.db.driverClass", Driver.class));
+	 ds.setUrl(env.getProperty("persistence.db.url"));
+	 ds.setUsername(env.getProperty("persistence.db.username"));
+	 ds.setPassword(env.getProperty("persistence.db.password"));
+	 return ds;
+      }
+   }
 
-    @Bean
-    public JpaTransactionManager transactionManager() {
-	return new JpaTransactionManager(entityManagerFactory());
-    }
+   @Bean
+   public JpaTransactionManager transactionManager() {
+      return new JpaTransactionManager(entityManagerFactory());
+   }
 
-    @Bean
-    public EntityManagerFactory entityManagerFactory() {
-	LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
-	em.setDataSource(dataSource());
-	em.setJpaVendorAdapter(jpaVendorAdapter());
-	em.setPackagesToScan("de.tutorials.app"); // this implicitly generates
-						  // an appropriate
-						  // persistence.xml for us at
-						  // runtime .
-	em.afterPropertiesSet();
-	return em.getObject();
-    }
+   @Bean
+   public EntityManagerFactory entityManagerFactory() {
+      LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
+      em.setDataSource(dataSource());
+      em.setJpaVendorAdapter(jpaVendorAdapter());
+      
+      /*
+       * this implicitly generates an appropriate
+       * persistence.xml for us at runtime.
+       */
+      em.setPackagesToScan("de.tutorials.app");
+      
+      em.afterPropertiesSet();
+      return em.getObject();
+   }
 
-    @Bean
-    public PersistenceExceptionTranslator hibernateExceptionTranslator() {
-	return new HibernateExceptionTranslator();
-    }
+   @Bean
+   public PersistenceExceptionTranslator hibernateExceptionTranslator() {
+      return new HibernateExceptionTranslator();
+   }
 
-    @Bean
-    public HibernateJpaVendorAdapter jpaVendorAdapter() {
-	HibernateJpaVendorAdapter adapter = new HibernateJpaVendorAdapter();
-	adapter.setShowSql(env.getProperty("persistence.hibernate.showSql",
-		Boolean.class));
-	adapter.setGenerateDdl(env.getProperty(
-		"persistence.hibernate.generateDdl", Boolean.class));
-	adapter.setDatabasePlatform(env
-		.getProperty("persistence.hibernate.databasePlatform"));
-	return adapter;
-    }
+   @Bean
+   public HibernateJpaVendorAdapter jpaVendorAdapter() {
+      HibernateJpaVendorAdapter adapter = new HibernateJpaVendorAdapter();
+      adapter.setShowSql(env.getProperty("persistence.hibernate.showSql", Boolean.class));
+      adapter.setGenerateDdl(env.getProperty("persistence.hibernate.generateDdl", Boolean.class));
+      adapter.setDatabasePlatform(env.getProperty("persistence.hibernate.databasePlatform"));
+      return adapter;
+   }
 }
