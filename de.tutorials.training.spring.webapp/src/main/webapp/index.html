@@ -1,0 +1,45 @@
+<!DOCTYPE HTML>
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Tutorials Spring App</title>
+<script type="text/javascript" src="res/3rdparty/jq/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="res/3rdparty/jq/jquery.tmpl.min.js"></script>
+
+<script type="text/javascript" src="res/3rdparty/json2/json2.js"></script>
+
+
+<script id="userentryTemplate" type="text/x-jquery-tmpl">
+	<tr>
+		<td>${name}</td>
+		<td>${email}</td>
+	</tr>
+</script>
+
+<script type="text/javascript" src="res/js/app.js"></script>
+</head>
+<body>
+	<h1>Welcome Tutorials Spring App</h1>
+
+	<form id="addUserForm">
+		<label for="txtUsername">Username:&nbsp;</label><input type="text"id="txtUsername" /><br /> 
+		<label for="txtEmail">Email:&nbsp;</label><input type="email" id="txtEmail" /><br />
+		<input type="submit" value="Register" />
+	</form>
+
+	<div id="userlist">
+		<table border="1">
+			<thead>
+				<tr>
+					<th>Username</th>
+					<th>Email</th>
+				</tr>
+			</thead>
+			<tbody id="userlistBody">
+			</tbody>
+		</table>
+	</div>
+</body>
+
+</html>
