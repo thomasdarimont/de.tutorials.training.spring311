@@ -14,7 +14,7 @@
 
 	<packaging>war</packaging>
 
-	<name>tutorials-spring-webapp</name>
+	<name>de.tutorials.training.spring.webapp</name>
 
 	<properties>
 		<endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
