@@ -8,6 +8,7 @@
 		<artifactId>de.tutorials.training.spring.parent</artifactId>
 		<groupId>de.tutorials</groupId>
 		<version>0.0.1-SNAPSHOT</version>
+		<relativePath>../de.tutorials.training.spring.parent/pom.xml</relativePath>
 	</parent>
 
 
